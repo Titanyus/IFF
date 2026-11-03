@@ -1,0 +1,53 @@
+# Standalone Dockhand demo stack; do not merge with compose.yaml.
+name: ff-rails-dockhand
+services:
+  db:
+    restart: unless-stopped
+    image: postgres:17-alpine@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set-in-env}
+      POSTGRES_USER: ${POSTGRES_USER:?set-in-env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set-in-env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - private_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  web:
+    build: .
+    environment:
+      RAILS_ENV: development
+      RAILS_ALLOWED_HOSTS: ${APP_HOST:?set-server-ip-or-hostname}
+      SECRET_KEY_BASE: ${RAILS_SECRET_KEY_BASE:?set-in-env}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - private_db
+      - web_net
+    restart: unless-stopped
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    depends_on:
+      - web
+    ports:
+      - "${BIND_IP:-0.0.0.0}:2501:80"
+    networks:
+      - web_net
+    restart: unless-stopped
+volumes:
+  pgdata:
+networks:
+  private_db:
+    internal: true
+  web_net: {}

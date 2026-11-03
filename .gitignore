@@ -11,3 +11,4 @@
 **/.bundle/
 **/.venv/
 .DS_Store
+**/.env.dockhand

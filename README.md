@@ -84,6 +84,8 @@ Die Einrichtung vom 03.11.2026 ergänzt `Gemfile.lock`, `requirements.lock` mit 
 
 ## Projektunterlagen
 
+- [DOCKHAND.md](docs/DOCKHAND.md) – Git-Stacks für Rails auf Port 2501 und Django/Vue auf Port 2502
+
 - [SETUP_REPORT.md](docs/SETUP_REPORT.md) – Einrichtung und Prüfergebnisse
 - [STACK_COMPARISON.md](docs/STACK_COMPARISON.md) – Codex-Entwicklung, Betrieb und Performance
 

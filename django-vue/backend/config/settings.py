@@ -5,7 +5,9 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = os.environ.get("DJANGO_DEBUG", "0") == "1"
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web"]
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get(
+    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,web"
+).split(",") if host.strip()]
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
     "django.contrib.sessions", "django.contrib.messages", "django.contrib.staticfiles", "records",
