@@ -1,0 +1,15 @@
+<p><%= link_to "← Zurück zur Übersicht", care_cases_path, class: "back-link" %></p>
+<p class="eyebrow">NEUANLAGE</p><h1>Wartenden Förderfall anlegen</h1><p class="muted">Kind und Sorgeberechtigte werden einmalig angelegt bzw. verknüpft.</p>
+<div class="panel">
+  <%= form_with url: care_cases_path, scope: :care_case, method: :post, class: "form-grid" do |f| %>
+    <label>Vorname <%= f.text_field :first_name, maxlength: 100, required: true %></label>
+    <label>Nachname <%= f.text_field :last_name, maxlength: 100, required: true %></label>
+    <label>Anmeldedatum <%= f.date_field :requested_on, value: Date.current.iso8601, required: true %></label>
+    <label>Vorhandene Bezugsperson (optional)
+      <%= f.select :guardian_id, options_from_collection_for_select(@guardians, :id, :full_name), { include_blank: "– Neue Bezugsperson –" } %>
+    </label>
+    <label>Neue Bezugsperson (wenn oben keine gewählt)<%= f.text_field :guardian_name, maxlength: 200 %></label>
+    <div><%= f.submit "Wartenden Förderfall speichern", class: "primary" %></div>
+  <% end %>
+  <p class="hint">Keine echten personenbezogenen Daten verwenden.</p>
+</div>

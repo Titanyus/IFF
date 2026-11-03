@@ -1,0 +1,31 @@
+<p><%= link_to "← Zurück zur Übersicht", care_cases_path, class: "back-link" %></p>
+<div class="heading"><div><p class="eyebrow">FÖRDERFALL #<%= @care_case.id %></p><h1><%= @care_case.child.full_name %></h1></div><span class="pill <%= @care_case.status %>"><%= status_label(@care_case.status) %></span></div>
+<div class="columns">
+  <section class="panel"><h2>Stammdaten und Verlauf</h2>
+    <dl class="data-list"><dt>Kind</dt><dd><%= @care_case.child.full_name %></dd>
+      <dt>Bezugsperson</dt><dd><%= @care_case.child.guardians.map(&:full_name).join(", ") %></dd>
+      <dt>Anmeldung</dt><dd><%= l(@care_case.requested_on) %></dd>
+      <dt>Förderbeginn</dt><dd><%= @care_case.started_on ? l(@care_case.started_on) : "–" %></dd>
+      <dt>Förderende</dt><dd><%= @care_case.ended_on ? l(@care_case.ended_on) : "–" %></dd></dl>
+  </section>
+  <section class="panel"><h2>Aktionen</h2>
+    <% if @care_case.deleted? %><p class="muted">Dieser Fall liegt im Papierkorb.</p>
+      <% if CareCaseAccess.can_trash?(current_user) %><%= button_to "Wiederherstellen", restore_care_case_path(@care_case), method: :patch, class: "secondary desktop-only" %><% end %>
+    <% elsif CareCaseAccess.can_manage?(current_user) %>
+      <% if @care_case.status != "closed" %>
+        <%= form_with url: (@care_case.status == "waiting" ? activate_care_case_path(@care_case) : close_care_case_path(@care_case)), method: :patch, class: "form-column desktop-only" do |f| %>
+          <label><%= @care_case.status == "waiting" ? "Förderbeginn" : "Förderende" %><%= f.date_field :effective_on, value: Date.current.iso8601, required: true %></label>
+          <%= f.submit (@care_case.status == "waiting" ? "Förderung starten" : "Förderung abschließen"), class: "primary" %>
+        <% end %>
+      <% else %><p class="muted">Fall abgeschlossen. Für eine neue Förderung später einen neuen Fall anlegen.</p><% end %>
+      <% if CareCaseAccess.can_trash?(current_user) %><%= button_to "In den Papierkorb", trash_care_case_path(@care_case), method: :patch, class: "danger desktop-only", form: { data: { turbo_confirm: "Diesen Fall in den Papierkorb verschieben?" } } %><% end %>
+    <% else %><p class="muted">Für diesen Fall besteht Leseberechtigung.</p><% end %>
+  </section>
+</div>
+<section class="panel"><h2>Änderungshistorie</h2>
+  <% @care_case.audit_events.includes(:actor).order(created_at: :desc).each do |ev| %>
+    <div class="event"><span><%= l(ev.created_at, format: :long) %></span> · <strong><%= ev.actor.email %></strong> · <%= ev.action %>
+      <% if ev.to_status.present? %>(<%= ev.from_status.presence || "–" %> → <%= ev.to_status %>)<% end %>
+    </div>
+  <% end %>
+</section>

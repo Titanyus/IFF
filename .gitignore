@@ -1,0 +1,13 @@
+.env
+**/.env
+**/.env.local
+**/__pycache__/
+**/*.pyc
+**/node_modules/
+**/dist/
+**/tmp/
+**/log/
+**/storage/
+**/.bundle/
+**/.venv/
+.DS_Store

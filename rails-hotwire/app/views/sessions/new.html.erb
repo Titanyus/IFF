@@ -1,0 +1,10 @@
+<div class="login-panel panel">
+  <p class="eyebrow">TECHNISCHER PROTOTYP</p><h1>Willkommen zurück</h1>
+  <p class="muted">Mit einem fiktiven Demo-Konto anmelden.</p>
+  <%= form_with url: session_path, method: :post, class: "form-column" do |f| %>
+    <label>Benutzername <%= f.email_field :email, required: true, value: "verwaltung@example.test", autocomplete: "username" %></label>
+    <label>Passwort <%= f.password_field :password, required: true, autocomplete: "current-password" %></label>
+    <%= f.submit "Anmelden", class: "primary" %>
+  <% end %>
+  <p class="hint">Demo: verwaltung@example.test · DemoPass-2026!</p>
+</div>

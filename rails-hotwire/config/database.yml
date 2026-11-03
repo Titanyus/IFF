@@ -1,0 +1,13 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: <%= ENV.fetch("POSTGRES_HOST", "db") %>
+  username: <%= ENV.fetch("POSTGRES_USER", "ff_demo") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "") %>
+development:
+  <<: *default
+  database: <%= ENV.fetch("POSTGRES_DB", "ff_rails") %>
+test:
+  <<: *default
+  database: ff_rails_test

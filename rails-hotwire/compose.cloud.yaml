@@ -1,0 +1,10 @@
+# Optional CA trust for builds behind a managed HTTPS proxy.
+# Usage: docker compose -f compose.yaml -f compose.cloud.yaml build
+services:
+  web:
+    build:
+      secrets:
+        - proxy_ca
+secrets:
+  proxy_ca:
+    file: ${FF_BUILD_CA_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}

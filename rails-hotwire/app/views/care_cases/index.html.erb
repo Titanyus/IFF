@@ -1,0 +1,20 @@
+<div class="heading">
+  <div><p class="eyebrow">KINDER- UND FÖRDERFALLVERWALTUNG</p><h1>Fallübersicht</h1><p class="muted">Eine Datenbasis, verschiedene berechtigte Ansichten.</p></div>
+  <% if CareCaseAccess.can_manage?(current_user) %><%= link_to "+ Neuen Fall anlegen", new_care_case_path, class: "primary desktop-only" %><% end %>
+</div>
+<nav class="tabs" aria-label="Fallfilter">
+  <% {"waiting"=>"Warteliste","active"=>"Aktiv","closed"=>"Abgeschlossen","all"=>"Alle Fälle"}.each do |key, title| %>
+    <%= link_to title, care_cases_path(status: key), class: (@filter == key ? "selected" : "") %>
+  <% end %>
+  <% if CareCaseAccess.can_trash?(current_user) %><%= link_to "Papierkorb", care_cases_path(status: "trashed"), class: (@filter == "trashed" ? "selected" : "") %><% end %>
+</nav>
+<section class="panel">
+  <div class="list-heading"><h2><%= {"waiting"=>"Warteliste","active"=>"Aktive Förderung","closed"=>"Abgeschlossene Fälle","all"=>"Alle Fälle","trashed"=>"Papierkorb"}[@filter] %></h2><span class="count"><%= @cases.size %> Fälle</span></div>
+  <% if @cases.empty? %><p class="muted">In dieser Ansicht gibt es keine Fälle.</p><% end %>
+  <% @cases.each do |record| %>
+    <article class="case-item">
+      <div><span class="pill <%= record.status %>"><%= status_label(record.status) %></span><h3><%= record.child.full_name %></h3><p class="muted">Anmeldung: <%= l(record.requested_on) %> · Förderfall #<%= record.id %></p></div>
+      <%= link_to "Details", care_case_path(record), class: "secondary" %>
+    </article>
+  <% end %>
+</section>

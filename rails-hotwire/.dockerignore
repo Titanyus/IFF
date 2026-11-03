@@ -1,0 +1,9 @@
+.env
+.git
+.gitignore
+log/
+tmp/
+storage/
+coverage/
+.bundle/
+vendor/
